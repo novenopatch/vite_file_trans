@@ -1,11 +1,11 @@
 import React from 'react';
 
-const Home = () => {
+const File = () => {
     return (
         <div>
-            <h1>4444444</h1>
+            
         </div>
     );
 };
 
-export default Home;
+export default File;
