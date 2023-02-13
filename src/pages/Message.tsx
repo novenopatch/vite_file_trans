@@ -1,10 +1,10 @@
-import React, { FormEvent,ChangeEvent, useState,useContext, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
-import { MessageData } from '../types/MessageData';
+import  { FormEvent,ChangeEvent, useState,useContext, useEffect } from 'react';
 import { Card, ListGroup, ListGroupItem,Button, Form } from "react-bootstrap"
 import Swal from 'sweetalert2';
 import { MessageData } from "../types/MessageData";
 import firebaseService from "../services/firebase";
+import { AuthContext } from "../context/AuthContext";
+
 
 
 const Message = () => {
@@ -14,14 +14,13 @@ const Message = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
         if (!text) return;
-        const id =firebase.addMessage(text,null);
-        console.log(id);
+        firebaseService.addMessage(text,null);
         setText("");
         Swal.fire({
             icon: 'success',
             text: 'Succes,your message is up to server !',
             title: "All is right"
-        }),
+        });
     }    
 
     const fetchData = async () => {
