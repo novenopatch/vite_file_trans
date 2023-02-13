@@ -1,5 +1,5 @@
 import  { FormEvent,ChangeEvent, useState,useContext, useEffect } from 'react';
-import { Card, ListGroup, ListGroupItem,Button, Form } from "react-bootstrap"
+import { Card, ListGroup, ListGroupItem,Button, Form, Container } from "react-bootstrap"
 import Swal from 'sweetalert2';
 import { MessageData } from "../types/MessageData";
 import firebaseService from "../services/firebase";
@@ -46,17 +46,24 @@ const Message = () => {
                 </Form>
             </Card.Body>
         </Card>
-         <Card>
+        <Container>
+        <Card>
              <Card.Header>Messages sent</Card.Header>
-            <ListGroup className="list-group-flush">
+            <ListGroup className="list-group-flush" as="ol" numbered>
                 {0 === messages.length
                     ? <ListGroupItem></ListGroupItem>
                     : messages.map((doc, key) => {
-                        return <ListGroupItem action key={key} >{doc.content}</ListGroupItem>
+                        return <ListGroupItem action key={key} as="li"
+                        className="d-flex justify-content-between align-items-start"
+                      >
+                         <div className="ms-2 me-auto"> { `${doc.content} +  at  ${doc.timestamp.toDate}` } </div>
+                        </ListGroupItem>
                     })
                 }
             </ListGroup>
         </Card>
+        </Container>
+       
         </>
        
     );
