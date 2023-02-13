@@ -95,19 +95,29 @@ class FirebaseService{
         return id;
     }
   
+   
     async getMessagesSentByCurrentUser(): Promise<MessageData[]> {
-        const q = query(this.messagesCollection,orderBy("timestamp",'asc'), this.auth.currentUser ? where('userId', '==', this.auth.currentUser.uid):null );
+      try {
+        const q = query(this.messagesCollection, orderBy("timestamp", "asc"));
         const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot) {
+          return [];
+        }
 
         const messages: MessageData[] = [];
 
-        querySnapshot.docs.
-        forEach(doc => {
-            messages.push(doc.data());
-        })
+        querySnapshot.docs.forEach(doc => {
+          messages.push(doc.data());
+        });
 
         return messages;
-    }
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+}
+
     async getFilesSentByCurrentUser(): Promise<FileData[]> {
         const q = query(this.filesCollection, where('userId', '==', this.auth.currentUser.uid));
         const querySnapshot = await getDocs(q);
