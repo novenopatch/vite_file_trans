@@ -1,7 +1,8 @@
 import { DocumentData } from "firebase/firestore";
 import { FullMetadata, getMetadata, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
-import firebaseService, { FileData } from "../services/firebase";
+import firebaseService from "../services/firebase";
+import { FileData } from "../types/FileData";
 
 export type useFileData = {
     error: boolean,
