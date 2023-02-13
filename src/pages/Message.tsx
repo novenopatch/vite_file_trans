@@ -20,7 +20,8 @@ const Message = () => {
             icon: 'success',
             text: 'Succes,your message is up to server !',
             title: "All is right"
-        })
+        }),
+         { messages } = useMessages();
     }    
     return (
         <>
