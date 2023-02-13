@@ -56,7 +56,7 @@ const Message = () => {
                         return <ListGroupItem action key={key} as="li"
                         className="d-flex justify-content-between align-items-start"
                       >
-                         <div className="ms-2 me-auto"> { `${doc.content} +  at  ${doc.timestamp.toDate}` } </div>
+                         <div className="ms-2 me-auto"> { `${doc.content} +  at  ${doc.timestamp.toDate().toLocaleDateString()}` } </div>
                         </ListGroupItem>
                     })
                 }
