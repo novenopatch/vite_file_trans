@@ -10,10 +10,11 @@ import Swal from 'sweetalert2';
 const Message = () => {
     const { messages } = useMessages();
     const [text, setText] = useState("");
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) =>{
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
         if (!text) return;
-        firebase.addMessage(text,null);
+        const id =firebase.addMessage(text,null);
+        console.log(id);
         setText("");
         Swal.fire({
             icon: 'success',
