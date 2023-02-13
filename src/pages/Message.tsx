@@ -21,6 +21,7 @@ const Message = () => {
             text: 'Succes,your message is up to server !',
             title: "All is right"
         });
+        fetchData();
     }    
 
     const fetchData = async () => {
