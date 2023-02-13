@@ -1,14 +1,15 @@
-import React, { FormEvent,ChangeEvent, useState } from 'react';
+import React, { FormEvent,ChangeEvent, useState,useContext, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { MessageData } from '../types/MessageData';
 import { Card, ListGroup, ListGroupItem,Button, Form } from "react-bootstrap"
-import { useMessages } from '../hooks/useMessages';
-import firebase from '../services/firebase';
 import Swal from 'sweetalert2';
+import { MessageData } from "../types/MessageData";
+import firebaseService from "../services/firebase";
 
 
 const Message = () => {
-    const { messages } = useMessages();
+    const { currentUser } = useContext(AuthContext);
+    const [messages, setMesages] = useState<MessageData[]>([]);
     const [text, setText] = useState("");
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
@@ -21,8 +22,14 @@ const Message = () => {
             text: 'Succes,your message is up to server !',
             title: "All is right"
         }),
-         { messages } = useMessages();
     }    
+
+    const fetchData = async () => {
+        setMesages(await firebaseService.getMessagesSentByCurrentUser());
+    }
+    useEffect(() => {
+        fetchData();
+    }, [currentUser]);
     return (
         <>
          <Card>
