@@ -9,6 +9,7 @@ export default function File() {
     const params = useParams();
 
     const [downloading, setDownloading] = useState<boolean>(false);
+    const [fileUrl, setFileUrl] = useState<string>("");
 
     const { error, file, loading, metadata, owner } = useFile(params.id);
 
@@ -22,10 +23,11 @@ export default function File() {
         a.click();
 
         document.body.removeChild(a);
-
+        setFileUrl(url);
         URL.revokeObjectURL(url);
 
         setDownloading(false);
+        
     }
    
     return (
@@ -50,6 +52,7 @@ export default function File() {
                             <Button className={downloading ? 'disabled mb-3' : 'mb-3'} variant="success" onClick={handleDownload}>
                                 {downloading ? 'Téléchargement en cours...' : 'Télécharger'}
                             </Button>
+                            <a href={fileUrl} target="_blanl">View</a>
                         </Card.Body>
                         <Card.Footer>
                         Partagé par {owner ? `${owner.displayName}` : 'un utilisateur anonyme'}
