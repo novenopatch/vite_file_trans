@@ -30,6 +30,7 @@ class FirebaseService{
         this.googleAuthProvider = new GoogleAuthProvider();
         this.storage = getStorage();
         this.usersCollection = collection(this.firestore,'users') as CollectionReference<UserData>;
+        this.messagesCollection = collection(this.firestore,'messages') as CollectionReference<MessageData>;
     }
     async addUser(user: User): Promise<void> {
         await setDoc(doc(this.usersCollection, user.uid), {
@@ -37,6 +38,20 @@ class FirebaseService{
             displayName: user.displayName,
             email: user.email
         });
+    }
+    async addMessage(content: string,file:FileData|null): Promise<string> {
+        const id = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)().toUpperCase();
+        await setDoc<MessageData>(doc(this.messagesCollection, id), {
+            id: id,
+            content: content,
+            senderId: this.auth.currentUser ? this.auth.currentUser.uid : null,
+            file: file,
+            timestamp: Timestamp.now(),
+            isRead: false
+        });
+
+        return id;
+
     }
     async signInWithGoogle(): Promise<UserCredential>{
         try{
@@ -79,20 +94,7 @@ class FirebaseService{
 
         return id;
     }
-    async addMessage(content: string,file:FileData|null): Promise<string> {
-        const id = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)().toUpperCase();
-        await setDoc<MessageData>(doc(this.messagesCollection, id), {
-            id: id,
-            content: content,
-            senderId: this.auth.currentUser ? this.auth.currentUser.uid : null,
-            file: file,
-            timestamp: Timestamp.now(),
-            isRead: false
-        });
-
-        return id;
-
-    }
+  
     async getMessagesSentByCurrentUser(): Promise<MessageData[]> {
         const q = query(this.messagesCollection,orderBy("timestamp",'asc'), this.auth.currentUser ? where('userId', '==', this.auth.currentUser.uid):null );
         const querySnapshot = await getDocs(q);
