@@ -1,22 +1,18 @@
 import {initializeApp} from "firebase/app";
+import { orderBy, Timestamp } from "firebase/firestore";
 import config from "./config.json";
 import { Auth, getAuth, GoogleAuthProvider, signInWithPopup, signOut, User, UserCredential } from "firebase/auth";
 import { collection, CollectionReference, doc, Firestore, getDoc, getDocs, getFirestore, query, setDoc, where } from "firebase/firestore";
 import { FirebaseStorage, getStorage, ref, uploadBytesResumable, UploadTask } from "firebase/storage";
 import { uuidv4 } from '@firebase/util';
 import { customAlphabet } from "nanoid";
+import { FileData } from "../types/FileData";
+import { UserData } from "../types/UserData";
+import { MessageData } from "../types/MessageData";
 
-export type FileData = {
-    id: string,
-    originalFilename: string,
-    uniqueFilename: string,
-    userId: string
-}
-export type UserData = {
-    displayName : string,
-    uid : string,
-    email: string|null
-}
+
+
+
 class FirebaseService{
     auth: Auth;
     firestore: Firestore;
@@ -24,6 +20,7 @@ class FirebaseService{
     googleAuthProvider: GoogleAuthProvider;
     storage : FirebaseStorage;
     usersCollection: CollectionReference<UserData>;
+    messagesCollection: CollectionReference<MessageData>;
     constructor(){
         initializeApp(config)
         this.auth = getAuth();
@@ -81,6 +78,33 @@ class FirebaseService{
         });
 
         return id;
+    }
+    async addMessage(content: string,file:FileData|null): Promise<string> {
+        const id = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)().toUpperCase();
+        await setDoc<MessageData>(doc(this.messagesCollection, id), {
+            id: id,
+            content: content,
+            senderId: this.auth.currentUser ? this.auth.currentUser.uid : null,
+            file: file,
+            timestamp: Timestamp.now(),
+            isRead: false
+        });
+
+        return id;
+
+    }
+    async getMessagesSentByCurrentUser(): Promise<MessageData[]> {
+        const q = query(this.messagesCollection,orderBy("timestamp",'asc'), this.auth.currentUser ? where('userId', '==', this.auth.currentUser.uid):null );
+        const querySnapshot = await getDocs(q);
+
+        const messages: MessageData[] = [];
+
+        querySnapshot.docs.
+        forEach(doc => {
+            messages.push(doc.data());
+        })
+
+        return messages;
     }
     async getFilesSentByCurrentUser(): Promise<FileData[]> {
         const q = query(this.filesCollection, where('userId', '==', this.auth.currentUser.uid));

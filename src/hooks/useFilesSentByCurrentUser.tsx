@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import firebaseService, { FileData } from "../services/firebase";
+import firebaseService from "../services/firebase";
+import { FileData } from "../types/FileData";
 
 export const useFilesSentByCurrentUser = () => {
     const { currentUser } = useContext(AuthContext);
