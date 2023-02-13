@@ -8,13 +8,14 @@ import { customAlphabet } from "nanoid";
 
 export type FileData = {
     id: string,
-    originalFIlename: string,
-    uniqueFuleName: string,
-    userId: string|null
+    originalFilename: string,
+    uniqueFilename: string,
+    userId: string
 }
 export type UserData = {
     displayName : string,
-    uid : string
+    uid : string,
+    email: string|null
 }
 class FirebaseService{
     auth: Auth;
@@ -36,12 +37,14 @@ class FirebaseService{
     async addUser(user: User): Promise<void> {
         await setDoc(doc(this.usersCollection, user.uid), {
             uid: user.uid,
-            displayName: user.displayName
+            displayName: user.displayName,
+            email: user.email
         });
     }
     async signInWithGoogle(): Promise<UserCredential>{
         try{
                 const userCredential = await signInWithPopup(this.auth,this.googleAuthProvider);
+                await this.addUser(userCredential.user)
         } catch(error){
             return null;
         }
@@ -58,6 +61,46 @@ class FirebaseService{
     getCurrentUser(): User | null {
         return this.auth.currentUser;
     }
+    getUniqueFilename(file: File) {
+        return `${uuidv4()}.${file.name.split('.').pop()}`;
+    }
+
+    uploadFile(file: File, filename: string): UploadTask {
+        const storageRef = ref(this.storage, filename);
+
+        return uploadBytesResumable(storageRef, file);
+    }
+    async addFile(originalFilename: string, uniqueFilename: string): Promise<string> {
+        const id = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)().toUpperCase();
+
+        await setDoc<FileData>(doc(this.filesCollection, id), {
+            id: id,
+            originalFilename: originalFilename,
+            uniqueFilename: uniqueFilename,
+            userId: this.auth.currentUser ? this.auth.currentUser.uid : null
+        });
+
+        return id;
+    }
+    async getFilesSentByCurrentUser(): Promise<FileData[]> {
+        const q = query(this.filesCollection, where('userId', '==', this.auth.currentUser.uid));
+        const querySnapshot = await getDocs(q);
+
+        const files: FileData[] = [];
+
+        querySnapshot.docs.forEach(doc => {
+            files.push(doc.data());
+        })
+
+        return files;
+    }
+
+    async getSingleFile(id: string): Promise<FileData> {
+        const fileData = await getDoc(doc(this.filesCollection, id));
+        return fileData.data();
+    }
+
+    
 
 }
 export default new FirebaseService();

@@ -13,8 +13,9 @@ const Navigation = () => {
                 <Nav className='me-auto'>
                     <Link to="/" className='nav-link'>Home</Link>
                     <Link to="/files" className='nav-link'>Files</Link>
-                    <Link to="/sent" className='nav-link'>Send</Link>
-
+                    {
+                        currentUser && <Link to="/sent" className='nav-link'>Sent</Link>
+                    }
                 </Nav>
                 <div className={isLoaded ? '' : 'd-none'}>
                         {
