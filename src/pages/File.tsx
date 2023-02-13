@@ -22,7 +22,6 @@ export default function File() {
         a.click();
 
         document.body.removeChild(a);
-        setFileUrl(url);
         URL.revokeObjectURL(url);
 
         setDownloading(false);
