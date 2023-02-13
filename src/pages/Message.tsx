@@ -49,7 +49,7 @@ const Message = () => {
         <Container>
         <Card>
              <Card.Header>Messages sent</Card.Header>
-            <ListGroup className="list-group-flush" as="ol" numbered>
+            <ListGroup className="list-group-flush" >
                 {0 === messages.length
                     ? <ListGroupItem></ListGroupItem>
                     : messages.map((doc, key) => {
