@@ -16,6 +16,7 @@ const Navigation = () => {
                     {
                         currentUser && <Link to="/sent" className='nav-link'>Sent</Link>
                     }
+                     <Link to="/messages" className='nav-link'>Messages</Link>
                 </Nav>
                 <div className={isLoaded ? '' : 'd-none'}>
                         {

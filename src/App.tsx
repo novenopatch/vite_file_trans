@@ -10,6 +10,7 @@ const Home = lazy(() => import("./pages/Home"));
 const File = lazy(() => import("./pages/File"));
 const FileRequest = lazy(() => import("./pages/FileRequest"));
 const Sent = lazy(() => import("./pages/Sent"));
+const Message = lazy(() => import("./pages/Message"));
 function App() {
 
   return (
@@ -23,6 +24,7 @@ function App() {
                       <Route path="/files" element={<Suspense> <FileRequest/></Suspense>}/>
                       <Route path="/files/:id" element={<Suspense> <File/></Suspense>}/>
                       <Route path="/sent" element={<Suspense> <Sent/></Suspense>}/>
+                      <Route path="/messages" element={<Suspense> <Message/></Suspense>}/>
                       <Route path="*" element={<Suspense> <Home/></Suspense>}/>
                   </Routes>
                 </Col>
